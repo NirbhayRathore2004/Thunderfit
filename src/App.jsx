@@ -1,15 +1,52 @@
 import { useState } from 'react'
 import logo from './assets/logo.png'
+import MapView from './MapView'
 
 function App() {
   const [activeTab, setActiveTab] = useState('Activity Feed');
   const [likedActivities, setLikedActivities] = useState({});
+  const [mySegments, setMySegments] = useState([
+    {
+      id: 1,
+      name: 'Golden Gate Climb',
+      type: 'Run',
+      icon: '🏃',
+      distance: '2.3 km',
+      elevation: '120 m',
+      bestTime: '12:45',
+      attempts: 8
+    },
+    {
+      id: 2,
+      name: 'Bay Bridge Sprint',
+      type: 'Ride',
+      icon: '🚴‍♀️',
+      distance: '5.1 km',
+      elevation: '45 m',
+      bestTime: '8:32',
+      attempts: 12
+    }
+  ]);
 
   const toggleLike = (id) => {
     setLikedActivities(prev => ({
       ...prev,
       [id]: !prev[id]
     }));
+  };
+
+  const addActivityToSegments = (activity) => {
+    const newSegment = {
+      id: mySegments.length + 1,
+      name: activity.title,
+      type: activity.type,
+      icon: activity.icon,
+      distance: activity.stats.find(s => s.label === 'Distance')?.value || 'N/A',
+      elevation: '0 m',
+      bestTime: activity.stats.find(s => s.label === 'Time')?.value || 'N/A',
+      attempts: 1
+    };
+    setMySegments(prev => [...prev, newSegment]);
   };
 
   const navItems = [
@@ -37,6 +74,11 @@ function App() {
         { label: 'Time', value: '45m 10s' },
       ],
       map: true,
+      mapCoordinates: {
+        lat: 37.7694,
+        lng: -122.4862,
+        zoom: 14
+      },
       kudos: 24,
       comments: 3
     },
@@ -46,16 +88,22 @@ function App() {
       avatar: 'SA',
       avatarColor: '#e91e63',
       time: 'Today at 7:00 AM',
-      location: 'Morning Ride',
+      location: 'Bay Area',
       type: 'Ride',
       icon: '🚴‍♀️',
       title: 'Morning Commute ☕',
+      desc: 'Beautiful sunrise ride along the bay!',
       stats: [
         { label: 'Distance', value: '12.4 km' },
         { label: 'Speed', value: '22.5 km/h' },
-        { label: 'Power', value: '180 W' },
+        { label: 'Time', value: '33m 5s' },
       ],
-      map: false,
+      map: true,
+      mapCoordinates: {
+        lat: 37.8199,
+        lng: -122.4783,
+        zoom: 13
+      },
       kudos: 12,
       comments: 0
     },
@@ -112,56 +160,188 @@ function App() {
       {/* Center Column: Activity Feed */}
       <main className="main-feed">
 
-        {/* Greeting Header */}
-        <div style={{ marginBottom: '1.5rem' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-primary)' }}>
-            {getGreeting()}, Athlete! 👋
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-            Here's what your friends have been up to.
-          </p>
-        </div>
+        {activeTab === 'Activity Feed' && (
+          <>
+            {/* Greeting Header */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-primary)' }}>
+                {getGreeting()}, Athlete! 👋
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+                Here's what your friends have been up to.
+              </p>
+            </div>
 
-        {activities.map(activity => (
-          <div className="feed-card" key={activity.id}>
-            <div className="feed-header">
-              <div className="user-avatar" style={{ backgroundColor: activity.avatarColor }}>{activity.avatar}</div>
-              <div className="user-info">
-                <h4>{activity.user}</h4>
-                <span>{activity.time} • {activity.location}</span>
-              </div>
-              <div className="activity-icon">{activity.icon}</div>
-            </div>
-            <div className="feed-content">
-              <h3>{activity.title}</h3>
-              {activity.desc && <p className="feed-desc">{activity.desc}</p>}
-              <div className="feed-stats">
-                {activity.stats.map((stat, index) => (
-                  <div className="stat-item" key={index}>
-                    <label>{stat.label}</label>
-                    <span>{stat.value}</span>
+            {activities.map(activity => (
+              <div className="feed-card" key={activity.id}>
+                <div className="feed-header">
+                  <div className="user-avatar" style={{ backgroundColor: activity.avatarColor }}>{activity.avatar}</div>
+                  <div className="user-info">
+                    <h4>{activity.user}</h4>
+                    <span>{activity.time} • {activity.location}</span>
                   </div>
-                ))}
-              </div>
-              {activity.map && (
-                <div className="map-placeholder">
-                  <div className="map-overlay"></div>
-                  <span>🗺️ Map View</span>
+                  <div className="activity-icon">{activity.icon}</div>
                 </div>
-              )}
+                <div className="feed-content">
+                  <h3>{activity.title}</h3>
+                  {activity.desc && <p className="feed-desc">{activity.desc}</p>}
+                  <div className="feed-stats">
+                    {activity.stats.map((stat, index) => (
+                      <div className="stat-item" key={index}>
+                        <label>{stat.label}</label>
+                        <span>{stat.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {activity.map && (
+                    <MapView
+                      coordinates={activity.mapCoordinates}
+                      activityTitle={activity.title}
+                    />
+                  )}
+                </div>
+                <div className="feed-actions">
+                  <button
+                    className={`action-btn kudos ${likedActivities[activity.id] ? 'active' : ''}`}
+                    onClick={() => toggleLike(activity.id)}
+                  >
+                    {likedActivities[activity.id] ? '🧡' : '👍'} {activity.kudos + (likedActivities[activity.id] ? 1 : 0)}
+                  </button>
+                  <button className="action-btn">💬 {activity.comments > 0 ? `${activity.comments} Comments` : 'Comment'}</button>
+                  <button className="action-btn">🔗 Share</button>
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+
+        {activeTab === 'My Segments' && (
+          <>
+            {/* My Segments Header */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-primary)' }}>
+                My Segments ⭐
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+                Track your performance on your favorite routes and segments.
+              </p>
             </div>
-            <div className="feed-actions">
-              <button
-                className={`action-btn kudos ${likedActivities[activity.id] ? 'active' : ''}`}
-                onClick={() => toggleLike(activity.id)}
-              >
-                {likedActivities[activity.id] ? '🧡' : '👍'} {activity.kudos + (likedActivities[activity.id] ? 1 : 0)}
-              </button>
-              <button className="action-btn">💬 {activity.comments > 0 ? `${activity.comments} Comments` : 'Comment'}</button>
-              <button className="action-btn">🔗 Share</button>
+
+            {/* My Segments List */}
+            <div style={{ marginBottom: '2.5rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '1rem' }}>
+                Your Segments ({mySegments.length})
+              </h3>
+              {mySegments.map(segment => (
+                <div className="feed-card segment-card" key={segment.id}>
+                  <div className="feed-header">
+                    <div className="activity-icon" style={{ marginLeft: 0 }}>{segment.icon}</div>
+                    <div className="user-info" style={{ flex: 1 }}>
+                      <h4>{segment.name}</h4>
+                      <span>{segment.type} • {segment.attempts} attempts</span>
+                    </div>
+                  </div>
+                  <div className="feed-content">
+                    <div className="feed-stats">
+                      <div className="stat-item">
+                        <label>Distance</label>
+                        <span>{segment.distance}</span>
+                      </div>
+                      <div className="stat-item">
+                        <label>Elevation</label>
+                        <span>{segment.elevation}</span>
+                      </div>
+                      <div className="stat-item">
+                        <label>Best Time</label>
+                        <span>{segment.bestTime}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="feed-actions">
+                    <button className="action-btn">📊 View Details</button>
+                    <button className="action-btn">🏆 Leaderboard</button>
+                  </div>
+                </div>
+              ))}
             </div>
+
+            {/* Available Activities Section */}
+            <div>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '1rem' }}>
+                Available Activities
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                Add activities to your segments to track your progress.
+              </p>
+              {activities.map(activity => (
+                <div className="feed-card" key={activity.id}>
+                  <div className="feed-header">
+                    <div className="user-avatar" style={{ backgroundColor: activity.avatarColor }}>{activity.avatar}</div>
+                    <div className="user-info">
+                      <h4>{activity.user}</h4>
+                      <span>{activity.time} • {activity.location}</span>
+                    </div>
+                    <div className="activity-icon">{activity.icon}</div>
+                  </div>
+                  <div className="feed-content">
+                    <h3>{activity.title}</h3>
+                    {activity.desc && <p className="feed-desc">{activity.desc}</p>}
+                    <div className="feed-stats">
+                      {activity.stats.map((stat, index) => (
+                        <div className="stat-item" key={index}>
+                          <label>{stat.label}</label>
+                          <span>{stat.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="feed-actions">
+                    <button
+                      className="action-btn add-to-segment"
+                      onClick={() => addActivityToSegments(activity)}
+                    >
+                      ➕ Add to Segments
+                    </button>
+                    <button className="action-btn">👁️ View Details</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {activeTab === 'Training Log' && (
+          <div style={{ marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-primary)' }}>
+              Training Log 📅
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+              Coming soon...
+            </p>
           </div>
-        ))}
+        )}
+
+        {activeTab === 'My Routes' && (
+          <div style={{ marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-primary)' }}>
+              My Routes 🗺️
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+              Coming soon...
+            </p>
+          </div>
+        )}
+
+        {activeTab === 'Clubs' && (
+          <div style={{ marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-primary)' }}>
+              Clubs 👕
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+              Coming soon...
+            </p>
+          </div>
+        )}
 
       </main>
 
