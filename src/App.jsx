@@ -5,6 +5,7 @@ import MapView from './MapView'
 function App() {
   const [activeTab, setActiveTab] = useState('Activity Feed');
   const [likedActivities, setLikedActivities] = useState({});
+  const [selectedSport, setSelectedSport] = useState('All');
   const [mySegments, setMySegments] = useState([
     {
       id: 1,
@@ -125,8 +126,87 @@ function App() {
       map: false,
       kudos: 45,
       comments: 8
+    },
+    {
+      id: 4,
+      user: 'Emma Wilson',
+      avatar: 'EW',
+      avatarColor: '#4caf50',
+      time: '3 days ago',
+      location: 'Aquatic Center',
+      type: 'Swim',
+      icon: '🏊',
+      title: 'Morning Swim Session',
+      desc: 'Great pool session! Working on my freestyle technique.',
+      stats: [
+        { label: 'Distance', value: '2.5 km' },
+        { label: 'Pace', value: '2:15 /100m' },
+        { label: 'Time', value: '56m 15s' },
+      ],
+      map: false,
+      kudos: 18,
+      comments: 2
+    },
+    {
+      id: 5,
+      user: 'Alex Turner',
+      avatar: 'AT',
+      avatarColor: '#ff9800',
+      time: '4 days ago',
+      location: 'Mount Tamalpais',
+      type: 'Hike',
+      icon: '🥾',
+      title: 'Summit Hike - Mt. Tam',
+      desc: 'Amazing views from the top! Perfect weather.',
+      stats: [
+        { label: 'Distance', value: '15.2 km' },
+        { label: 'Elevation', value: '850 m' },
+        { label: 'Time', value: '3h 45m' },
+      ],
+      map: true,
+      mapCoordinates: {
+        lat: 37.9235,
+        lng: -122.5965,
+        zoom: 12
+      },
+      kudos: 32,
+      comments: 5
+    },
+    {
+      id: 6,
+      user: 'Lisa Chen',
+      avatar: 'LC',
+      avatarColor: '#e91e63',
+      time: '5 days ago',
+      location: 'Yoga Studio',
+      type: 'Yoga',
+      icon: '🧘',
+      title: 'Vinyasa Flow Class',
+      desc: 'Feeling centered and refreshed after this session.',
+      stats: [
+        { label: 'Duration', value: '1h 0m' },
+        { label: 'Calories', value: '180 kcal' },
+      ],
+      map: false,
+      kudos: 15,
+      comments: 1
     }
   ];
+
+  const sportTypes = [
+    { name: 'All', icon: '🌟', color: '#6d6d78' },
+    { name: 'Run', icon: '🏃', color: '#fc4c02' },
+    { name: 'Ride', icon: '🚴‍♀️', color: '#00A4EF' },
+    { name: 'Swim', icon: '🏊', color: '#4caf50' },
+    { name: 'Workout', icon: '🏋️‍♂️', color: '#9c27b0' },
+    { name: 'Hike', icon: '🥾', color: '#ff9800' },
+    { name: 'Yoga', icon: '🧘', color: '#e91e63' },
+  ];
+
+  // Filter activities based on selected sport
+  const filteredActivities = selectedSport === 'All'
+    ? activities
+    : activities.filter(activity => activity.type === selectedSport);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -172,7 +252,43 @@ function App() {
               </p>
             </div>
 
-            {activities.map(activity => (
+            {/* Sport Type Filter */}
+            <div className="sport-filter-container">
+              <h3 className="sport-filter-title">Filter by Sport</h3>
+              <div className="sport-filter-buttons">
+                {sportTypes.map((sport) => (
+                  <button
+                    key={sport.name}
+                    className={`sport-filter-btn ${selectedSport === sport.name ? 'active' : ''}`}
+                    onClick={() => setSelectedSport(sport.name)}
+                    style={{
+                      '--sport-color': sport.color,
+                      borderColor: selectedSport === sport.name ? sport.color : 'var(--border-color)',
+                      backgroundColor: selectedSport === sport.name ? `${sport.color}15` : 'white'
+                    }}
+                  >
+                    <span className="sport-icon">{sport.icon}</span>
+                    <span className="sport-name">{sport.name}</span>
+                    {selectedSport === sport.name && (
+                      <span className="sport-check">✓</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+              {selectedSport !== 'All' && (
+                <div className="filter-info">
+                  <span>Showing {filteredActivities.length} {selectedSport} {filteredActivities.length === 1 ? 'activity' : 'activities'}</span>
+                  <button
+                    className="clear-filter-btn"
+                    onClick={() => setSelectedSport('All')}
+                  >
+                    ✕ Clear Filter
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {filteredActivities.map(activity => (
               <div className="feed-card" key={activity.id}>
                 <div className="feed-header">
                   <div className="user-avatar" style={{ backgroundColor: activity.avatarColor }}>{activity.avatar}</div>
