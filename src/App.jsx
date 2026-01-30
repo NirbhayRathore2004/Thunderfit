@@ -56,6 +56,7 @@ function App() {
     { name: 'Training Log', icon: '📅' },
     { name: 'My Routes', icon: '🗺️' },
     { name: 'Clubs', icon: '👕' },
+    { name: 'Settings', icon: '⚙️' },
   ];
 
   const activities = [
@@ -456,6 +457,124 @@ function App() {
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
               Coming soon...
             </p>
+          </div>
+        )}
+
+        {activeTab === 'Settings' && (
+          <div className="settings-container">
+            <div style={{ marginBottom: '2rem' }}>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                Settings ⚙️
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>
+                Manage your account preferences and application settings.
+              </p>
+            </div>
+
+            <div className="settings-section">
+              <h3 className="settings-section-title">Profile Settings</h3>
+              <div className="settings-group">
+                <div className="settings-item">
+                  <div className="settings-item-info">
+                    <label>Display Name</label>
+                    <p>How you appear to other athletes.</p>
+                  </div>
+                  <input type="text" className="settings-input" defaultValue="John Doe" />
+                </div>
+                <div className="settings-item">
+                  <div className="settings-item-info">
+                    <label>Email Address</label>
+                    <p>Your primary contact email.</p>
+                  </div>
+                  <input type="email" className="settings-input" defaultValue="john.doe@example.com" />
+                </div>
+              </div>
+            </div>
+
+            <div className="settings-section">
+              <h3 className="settings-section-title">Preferences</h3>
+              <div className="settings-group">
+                <div className="settings-item">
+                  <div className="settings-item-info">
+                    <label>Units of Measure</label>
+                    <p>Choose between Metric and Imperial units.</p>
+                  </div>
+                  <select className="settings-select">
+                    <option value="metric">Metric (km, m, kg)</option>
+                    <option value="imperial">Imperial (mi, ft, lb)</option>
+                  </select>
+                </div>
+                <div className="settings-item">
+                  <div className="settings-item-info">
+                    <label>Default Sport</label>
+                    <p>The sport selected by default when viewing feeds.</p>
+                  </div>
+                  <select className="settings-select">
+                    <option value="all">All</option>
+                    <option value="run">Run</option>
+                    <option value="ride">Ride</option>
+                    <option value="swim">Swim</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="settings-section">
+              <h3 className="settings-section-title">Privacy & Security</h3>
+              <div className="settings-group">
+                <div className="settings-item toggle-item">
+                  <div className="settings-item-info">
+                    <label>Public Profile</label>
+                    <p>Allow anyone to view your activities and stats.</p>
+                  </div>
+                  <div className="toggle-switch">
+                    <input type="checkbox" id="public-profile" defaultChecked />
+                    <label htmlFor="public-profile"></label>
+                  </div>
+                </div>
+                <div className="settings-item toggle-item">
+                  <div className="settings-item-info">
+                    <label>Show Flybys</label>
+                    <p>Let others see when you pass them on your route.</p>
+                  </div>
+                  <div className="toggle-switch">
+                    <input type="checkbox" id="show-flybys" />
+                    <label htmlFor="show-flybys"></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="settings-section">
+              <h3 className="settings-section-title">Notifications</h3>
+              <div className="settings-group">
+                <div className="settings-item toggle-item">
+                  <div className="settings-item-info">
+                    <label>Email Notifications</label>
+                    <p>Receive weekly summaries and kudos alerts via email.</p>
+                  </div>
+                  <div className="toggle-switch">
+                    <input type="checkbox" id="email-notifications" defaultChecked />
+                    <label htmlFor="email-notifications"></label>
+                  </div>
+                </div>
+                <div className="settings-item toggle-item">
+                  <div className="settings-item-info">
+                    <label>Push Notifications</label>
+                    <p>Get instant alerts on your mobile device.</p>
+                  </div>
+                  <div className="toggle-switch">
+                    <input type="checkbox" id="push-notifications" defaultChecked />
+                    <label htmlFor="push-notifications"></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem' }}>
+              <button className="action-btn add-to-segment" style={{ padding: '0.75rem 2rem' }}>Save Changes</button>
+              <button className="action-btn" style={{ padding: '0.75rem 2rem' }}>Cancel</button>
+            </div>
           </div>
         )}
 
