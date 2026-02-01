@@ -6,60 +6,15 @@ function App() {
   const [activeTab, setActiveTab] = useState('Activity Feed');
   const [likedActivities, setLikedActivities] = useState({});
   const [selectedSport, setSelectedSport] = useState('All');
-  const [mySegments, setMySegments] = useState([
-    {
-      id: 1,
-      name: 'Golden Gate Climb',
-      type: 'Run',
-      icon: '🏃',
-      distance: '2.3 km',
-      elevation: '120 m',
-      bestTime: '12:45',
-      attempts: 8
-    },
-    {
-      id: 2,
-      name: 'Bay Bridge Sprint',
-      type: 'Ride',
-      icon: '🚴‍♀️',
-      distance: '5.1 km',
-      elevation: '45 m',
-      bestTime: '8:32',
-      attempts: 12
-    }
-  ]);
-
-  const toggleLike = (id) => {
-    setLikedActivities(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-  };
-
-  const addActivityToSegments = (activity) => {
-    const newSegment = {
-      id: mySegments.length + 1,
-      name: activity.title,
-      type: activity.type,
-      icon: activity.icon,
-      distance: activity.stats.find(s => s.label === 'Distance')?.value || 'N/A',
-      elevation: '0 m',
-      bestTime: activity.stats.find(s => s.label === 'Time')?.value || 'N/A',
-      attempts: 1
-    };
-    setMySegments(prev => [...prev, newSegment]);
-  };
-
-  const navItems = [
-    { name: 'Activity Feed', icon: '🏠' },
-    { name: 'My Segments', icon: '⭐' },
-    { name: 'Training Log', icon: '📅' },
-    { name: 'My Routes', icon: '🗺️' },
-    { name: 'Clubs', icon: '👕' },
-    { name: 'Settings', icon: '⚙️' },
-  ];
-
-  const activities = [
+  const [showNewActivityForm, setShowNewActivityForm] = useState(false);
+  const [newActivity, setNewActivity] = useState({
+    title: '',
+    type: 'Run',
+    distance: '',
+    time: '',
+    desc: ''
+  });
+  const [activities, setActivities] = useState([
     {
       id: 1,
       user: 'John Doe',
@@ -192,7 +147,94 @@ function App() {
       kudos: 15,
       comments: 1
     }
+  ]);
+  const [mySegments, setMySegments] = useState([
+    {
+      id: 1,
+      name: 'Golden Gate Climb',
+      type: 'Run',
+      icon: '🏃',
+      distance: '2.3 km',
+      elevation: '120 m',
+      bestTime: '12:45',
+      attempts: 8
+    },
+    {
+      id: 2,
+      name: 'Bay Bridge Sprint',
+      type: 'Ride',
+      icon: '🚴‍♀️',
+      distance: '5.1 km',
+      elevation: '45 m',
+      bestTime: '8:32',
+      attempts: 12
+    }
+  ]);
+
+  const toggleLike = (id) => {
+    setLikedActivities(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+  const addActivityToSegments = (activity) => {
+    const newSegment = {
+      id: mySegments.length + 1,
+      name: activity.title,
+      type: activity.type,
+      icon: activity.icon,
+      distance: activity.stats.find(s => s.label === 'Distance')?.value || 'N/A',
+      elevation: '0 m',
+      bestTime: activity.stats.find(s => s.label === 'Time')?.value || 'N/A',
+      attempts: 1
+    };
+    setMySegments(prev => [...prev, newSegment]);
+  };
+
+  const navItems = [
+    { name: 'Activity Feed', icon: '🏠' },
+    { name: 'My Segments', icon: '⭐' },
+    { name: 'Training Log', icon: '📅' },
+    { name: 'My Routes', icon: '🗺️' },
+    { name: 'Clubs', icon: '👕' },
+    { name: 'Settings', icon: '⚙️' },
   ];
+
+  const handleCreateActivity = (e) => {
+    e.preventDefault();
+    const sportIconMap = {
+      'Run': '🏃',
+      'Ride': '🚴‍♀️',
+      'Swim': '🏊',
+      'Workout': '🏋️‍♂️',
+      'Hike': '🥾',
+      'Yoga': '🧘'
+    };
+
+    const newActivityObj = {
+      id: activities.length + 1,
+      user: 'John Doe',
+      avatar: 'JD',
+      time: 'Just now',
+      location: 'Local Connection',
+      type: newActivity.type,
+      icon: sportIconMap[newActivity.type] || '⚡',
+      title: newActivity.title || 'Untitled Activity',
+      desc: newActivity.desc,
+      stats: [
+        { label: 'Distance', value: `${newActivity.distance} km` },
+        { label: 'Time', value: newActivity.time },
+      ],
+      map: false,
+      kudos: 0,
+      comments: 0
+    };
+
+    setActivities(prev => [newActivityObj, ...prev]);
+    setShowNewActivityForm(false);
+    setNewActivity({ title: '', type: 'Run', distance: '', time: '', desc: '' });
+  };
 
   const sportTypes = [
     { name: 'All', icon: '🌟', color: '#6d6d78' },
@@ -335,14 +377,91 @@ function App() {
         {activeTab === 'My Segments' && (
           <>
             {/* My Segments Header */}
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-primary)' }}>
-                My Segments ⭐
-              </h2>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-                Track your performance on your favorite routes and segments.
-              </p>
+            <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-primary)' }}>
+                  My Segments ⭐
+                </h2>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+                  Track your performance on your favorite routes and segments.
+                </p>
+              </div>
+              <button
+                className="action-btn add-to-segment"
+                onClick={() => setShowNewActivityForm(true)}
+                style={{ padding: '0.6rem 1.25rem' }}
+              >
+                ➕ Create Activity
+              </button>
             </div>
+
+            {/* New Activity Form */}
+            {showNewActivityForm && (
+              <div className="new-activity-card animate-slide-down">
+                <div className="card-header">
+                  <h3>Record New Activity ⚡</h3>
+                  <button className="close-btn" onClick={() => setShowNewActivityForm(false)}>✕</button>
+                </div>
+                <form onSubmit={handleCreateActivity}>
+                  <div className="form-grid">
+                    <div className="form-group full-width">
+                      <label>Activity Title</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Morning Blast, Coastal Ride..."
+                        value={newActivity.title}
+                        onChange={e => setNewActivity({ ...newActivity, title: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Sport Type</label>
+                      <select
+                        value={newActivity.type}
+                        onChange={e => setNewActivity({ ...newActivity, type: e.target.value })}
+                      >
+                        {sportTypes.filter(s => s.name !== 'All').map(s => (
+                          <option key={s.name} value={s.name}>{s.icon} {s.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Distance (km)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        value={newActivity.distance}
+                        onChange={e => setNewActivity({ ...newActivity, distance: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Time (HH:MM:SS)</label>
+                      <input
+                        type="text"
+                        placeholder="00:00:00"
+                        value={newActivity.time}
+                        onChange={e => setNewActivity({ ...newActivity, time: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="form-group full-width">
+                      <label>Description (Optional)</label>
+                      <textarea
+                        placeholder="How did it feel?"
+                        value={newActivity.desc}
+                        onChange={e => setNewActivity({ ...newActivity, desc: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <div className="form-actions">
+                    <button type="button" className="action-btn" onClick={() => setShowNewActivityForm(false)}>Cancel</button>
+                    <button type="submit" className="action-btn add-to-segment">Save Activity</button>
+                  </div>
+                </form>
+              </div>
+            )}
 
             {/* My Segments List */}
             <div style={{ marginBottom: '2.5rem' }}>
