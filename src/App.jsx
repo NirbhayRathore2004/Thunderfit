@@ -184,7 +184,7 @@ function App() {
       name: activity.title,
       type: activity.type,
       icon: activity.icon,
-      distance: activity.stats.find(s => s.label === 'Distance')?.value || 'N/A',
+      distance: activity.stats.find(s => s.label === 'Distance' || s.label === 'Weight')?.value || 'N/A',
       elevation: '0 m',
       bestTime: activity.stats.find(s => s.label === 'Time')?.value || 'N/A',
       attempts: 1
@@ -223,7 +223,12 @@ function App() {
       title: newActivity.title || 'Untitled Activity',
       desc: newActivity.desc,
       stats: [
-        { label: 'Distance', value: `${newActivity.distance} km` },
+        ...(newActivity.type !== 'Yoga' ? [
+          {
+            label: newActivity.type === 'Workout' ? 'Weight' : 'Distance',
+            value: newActivity.type === 'Workout' ? `${newActivity.distance} kg` : `${newActivity.distance} km`
+          }
+        ] : []),
         { label: 'Time', value: newActivity.time },
       ],
       map: false,
@@ -425,17 +430,19 @@ function App() {
                         ))}
                       </select>
                     </div>
-                    <div className="form-group">
-                      <label>Distance (km)</label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        placeholder="0.00"
-                        value={newActivity.distance}
-                        onChange={e => setNewActivity({ ...newActivity, distance: e.target.value })}
-                        required
-                      />
-                    </div>
+                    {newActivity.type !== 'Yoga' && (
+                      <div className="form-group">
+                        <label>{newActivity.type === 'Workout' ? 'Weight (kg)' : 'Distance (km)'}</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          value={newActivity.distance}
+                          onChange={e => setNewActivity({ ...newActivity, distance: e.target.value })}
+                          required={newActivity.type !== 'Yoga'}
+                        />
+                      </div>
+                    )}
                     <div className="form-group">
                       <label>Time (HH:MM:SS)</label>
                       <input
