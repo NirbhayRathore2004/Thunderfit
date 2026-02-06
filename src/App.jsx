@@ -1,9 +1,22 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import logo from './assets/logo.png'
 import MapView from './MapView'
 
 function App() {
   const [activeTab, setActiveTab] = useState('Activity Feed');
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
   const [likedActivities, setLikedActivities] = useState({});
   const [selectedSport, setSelectedSport] = useState('All');
   const [showNewActivityForm, setShowNewActivityForm] = useState(false);
@@ -312,7 +325,7 @@ function App() {
                     style={{
                       '--sport-color': sport.color,
                       borderColor: selectedSport === sport.name ? sport.color : 'var(--border-color)',
-                      backgroundColor: selectedSport === sport.name ? `${sport.color}15` : 'white'
+                      backgroundColor: selectedSport === sport.name ? `${sport.color}15` : 'var(--bg-card)'
                     }}
                   >
                     <span className="sport-icon">{sport.icon}</span>
@@ -618,8 +631,23 @@ function App() {
             </div>
 
             <div className="settings-section">
-              <h3 className="settings-section-title">Preferences</h3>
+              <h3 className="settings-section-title">Display Preferences</h3>
               <div className="settings-group">
+                <label className="settings-item toggle-item">
+                  <div className="settings-item-info">
+                    <div style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Dark Mode</div>
+                    <p>Use a dark color scheme for the application.</p>
+                  </div>
+                  <div className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      id="dark-mode-toggle"
+                      checked={darkMode}
+                      onChange={() => setDarkMode(!darkMode)}
+                    />
+                    <span className="toggle-slider"></span>
+                  </div>
+                </label>
                 <div className="settings-item">
                   <div className="settings-item-info">
                     <label>Units of Measure</label>
