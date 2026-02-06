@@ -27,6 +27,37 @@ function App() {
     time: '',
     desc: ''
   });
+  const [clubs, setClubs] = useState([
+    { id: 1, name: 'SF Runners', members: 12400, type: 'Running', joined: false, description: 'The largest running community in San Francisco.', color: '#333' },
+    { id: 2, name: 'ThunderFit Pro', members: 5200, type: 'Multi-sport', joined: true, description: 'Elite performance and triathlon training group.', color: '#00A4EF' },
+    { id: 3, name: 'Bay Area Cyclists', members: 8500, type: 'Cycling', joined: false, description: 'Weekend rides and social events for all levels.', color: '#fc4c02' },
+    { id: 4, name: 'Trail Blazers', members: 3100, type: 'Hiking', joined: false, description: 'Exploring the best trails in the beautiful Bay Area.', color: '#4caf50' },
+  ]);
+  const [showNewClubForm, setShowNewClubForm] = useState(false);
+  const [newClub, setNewClub] = useState({ name: '', type: 'Running', description: '' });
+
+  const toggleJoinClub = (id) => {
+    setClubs(prev => prev.map(club =>
+      club.id === id ? { ...club, joined: !club.joined, members: club.joined ? club.members - 1 : club.members + 1 } : club
+    ));
+  };
+
+  const handleCreateClub = (e) => {
+    e.preventDefault();
+    const newClubObj = {
+      id: clubs.length + 1,
+      name: newClub.name,
+      type: newClub.type,
+      members: 1,
+      description: newClub.description,
+      joined: true,
+      color: '#' + Math.floor(Math.random() * 16777215).toString(16)
+    };
+    setClubs([...clubs, newClubObj]);
+    setShowNewClubForm(false);
+    setNewClub({ name: '', type: 'Running', description: '' });
+  };
+
   const [activities, setActivities] = useState([
     {
       id: 1,
@@ -589,13 +620,130 @@ function App() {
         )}
 
         {activeTab === 'Clubs' && (
-          <div style={{ marginBottom: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-primary)' }}>
-              Clubs 👕
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-              Coming soon...
-            </p>
+          <div className="clubs-container">
+            <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-primary)' }}>
+                  Clubs 👕
+                </h2>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+                  Join communities, share your progress, and stay motivated.
+                </p>
+              </div>
+              <button
+                className="action-btn add-to-segment"
+                onClick={() => setShowNewClubForm(true)}
+                style={{ padding: '0.6rem 1.25rem' }}
+              >
+                ➕ Create Club
+              </button>
+            </div>
+
+            {/* Create Club Form */}
+            {showNewClubForm && (
+              <div className="new-activity-card animate-slide-down" style={{ marginBottom: '2.5rem' }}>
+                <div className="card-header">
+                  <h3>Create a New Community 🤝</h3>
+                  <button className="close-btn" onClick={() => setShowNewClubForm(false)}>✕</button>
+                </div>
+                <form onSubmit={handleCreateClub}>
+                  <div className="form-grid">
+                    <div className="form-group full-width">
+                      <label>Club Name</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Morning Runners, City Cyclists..."
+                        value={newClub.name}
+                        onChange={e => setNewClub({ ...newClub, name: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="form-group full-width">
+                      <label>Primary Sport</label>
+                      <select
+                        value={newClub.type}
+                        onChange={e => setNewClub({ ...newClub, type: e.target.value })}
+                      >
+                        <option value="Running">🏃 Running</option>
+                        <option value="Cycling">🚴 Cycling</option>
+                        <option value="Swimming">🏊 Swimming</option>
+                        <option value="Hiking">🥾 Hiking</option>
+                        <option value="Multi-sport">⚡ Multi-sport</option>
+                      </select>
+                    </div>
+                    <div className="form-group full-width">
+                      <label>Description</label>
+                      <textarea
+                        placeholder="What is this club about? (goals, location, vibes...)"
+                        value={newClub.description}
+                        onChange={e => setNewClub({ ...newClub, description: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="form-actions">
+                    <button type="button" className="action-btn" onClick={() => setShowNewClubForm(false)}>Cancel</button>
+                    <button type="submit" className="action-btn add-to-segment">Create Club</button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* My Clubs Section */}
+            <div style={{ marginBottom: '2.5rem' }}>
+              <h3 className="settings-section-title" style={{ paddingLeft: 0, marginBottom: '1rem' }}>Joined Clubs</h3>
+              <div className="clubs-grid">
+                {clubs.filter(c => c.joined).length > 0 ? (
+                  clubs.filter(c => c.joined).map(club => (
+                    <div className="feed-card club-card" key={club.id}>
+                      <div className="club-card-hero" style={{ backgroundColor: club.color }}>
+                        <span className="club-card-type">{club.type}</span>
+                      </div>
+                      <div className="club-card-body">
+                        <h4>{club.name}</h4>
+                        <p className="club-card-desc">{club.description}</p>
+                        <div className="club-card-stats">
+                          <span>👥 {club.members < 1000 ? club.members : (club.members / 1000).toFixed(1) + 'k'} Members</span>
+                        </div>
+                      </div>
+                      <div className="feed-actions" style={{ padding: '1rem' }}>
+                        <button className="action-btn" style={{ flex: 1 }}>View Club</button>
+                        <button className="action-btn" onClick={() => toggleJoinClub(club.id)}>Leave</button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', gridColumn: 'span 2', textAlign: 'center', padding: '2rem', background: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px dashed var(--border-color)' }}>
+                    You haven't joined any clubs yet. Explore available clubs below!
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Available Clubs Section */}
+            <div>
+              <h3 className="settings-section-title" style={{ paddingLeft: 0, marginBottom: '1rem' }}>Find New Communities</h3>
+              <div className="clubs-grid">
+                {clubs.filter(c => !c.joined).map(club => (
+                  <div className="feed-card club-card" key={club.id}>
+                    <div className="club-card-hero" style={{ backgroundColor: club.color }}>
+                      <span className="club-card-type">{club.type}</span>
+                    </div>
+                    <div className="club-card-body">
+                      <h4>{club.name}</h4>
+                      <p className="club-card-desc">{club.description}</p>
+                      <div className="club-card-stats">
+                        <span>👥 {club.members < 1000 ? club.members : (club.members / 1000).toFixed(1) + 'k'} Members</span>
+                      </div>
+                    </div>
+                    <div className="feed-actions" style={{ padding: '1rem' }}>
+                      <button className="action-btn add-to-segment" style={{ flex: 1 }} onClick={() => toggleJoinClub(club.id)}>Join Club</button>
+                      <button className="action-btn">Info</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
@@ -772,22 +920,27 @@ function App() {
         <div className="widget-card">
           <div className="widget-title">
             <span>Your Clubs</span>
-            <span style={{ fontSize: '0.7rem', color: 'var(--primary)', cursor: 'pointer' }}>View All</span>
+            <span
+              style={{ fontSize: '0.7rem', color: 'var(--primary)', cursor: 'pointer' }}
+              onClick={() => setActiveTab('Clubs')}
+            >
+              View All
+            </span>
           </div>
-          <div className="club-item">
-            <div className="club-img" style={{ background: '#333' }}></div>
-            <div>
-              <div className="club-name">SF Runners</div>
-              <div className="club-members">12k Members</div>
+          {clubs.filter(c => c.joined).slice(0, 3).map(club => (
+            <div className="club-item" key={club.id} onClick={() => setActiveTab('Clubs')}>
+              <div className="club-img" style={{ background: club.color }}></div>
+              <div>
+                <div className="club-name">{club.name}</div>
+                <div className="club-members">{club.members < 1000 ? club.members : (club.members / 1000).toFixed(1) + 'k'} Members</div>
+              </div>
             </div>
-          </div>
-          <div className="club-item">
-            <div className="club-img" style={{ background: '#00A4EF' }}></div>
-            <div>
-              <div className="club-name">ThunderFit Pro</div>
-              <div className="club-members">5k Members</div>
-            </div>
-          </div>
+          ))}
+          {clubs.filter(c => c.joined).length === 0 && (
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textAlign: 'center', marginTop: '1rem' }}>
+              Join a club to see it here!
+            </p>
+          )}
         </div>
 
         <div className="widget-card">

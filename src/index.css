@@ -363,6 +363,8 @@ body {
 [data-theme='dark'] .form-group select,
 [data-theme='dark'] .form-group textarea {
   background-color: #252525;
+  color: var(--text-primary);
+  border-color: var(--border-color);
 }
 
 /* Segment Card Styles */
@@ -885,7 +887,7 @@ body {
 
 /* New Activity Form Styles */
 .new-activity-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
   padding: 1.5rem;
@@ -1001,4 +1003,81 @@ body {
   .form-group.full-width {
     grid-column: span 1;
   }
+}
+
+/* Clubs Page Styles */
+.clubs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.club-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0 !important;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  overflow: hidden;
+}
+
+.club-card-hero {
+  height: 100px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.club-card-type {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.club-card-body {
+  padding: 1.25rem;
+  flex: 1;
+}
+
+.club-card-body h4 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.club-card-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.club-card-stats {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+[data-theme='dark'] .club-card-hero {
+  opacity: 0.85;
+}
+
+[data-theme='dark'] .club-card-type {
+  background: rgba(0, 0, 0, 0.3);
 }
