@@ -105,7 +105,16 @@ def read_activities(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
 @app.post("/activities", response_model=schemas.Activity)
 def create_activity(activity: schemas.ActivityCreate, db: Session = Depends(get_db)):
     user = db.query(models.User).first()
-    db_activity = models.Activity(**activity.dict(), user_id=user.id)
+    if not user:
+        # Create a default user if none exists
+        user = models.User(name="Default User", email="user@example.com", avatar="DU")
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    
+    # Support both Pydantic v1 and v2
+    data = activity.model_dump() if hasattr(activity, "model_dump") else activity.dict()
+    db_activity = models.Activity(**data, user_id=user.id)
     db.add(db_activity)
     db.commit()
     db.refresh(db_activity)

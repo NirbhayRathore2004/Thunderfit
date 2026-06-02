@@ -352,9 +352,14 @@ function App() {
         setActivities(prev => [created, ...prev]);
         setShowNewActivityForm(false);
         setNewActivity({ title: '', type: 'Run', distance: '', time: '', desc: '' });
+        alert("Activity saved successfully! 🏃‍♂️");
+      } else {
+        const errorData = await res.json().catch(() => ({ detail: "Unknown error" }));
+        alert(`Failed to save activity: ${errorData.detail || res.statusText}`);
       }
     } catch (err) {
       console.error("Failed to create activity", err);
+      alert("Network error: Could not connect to the server.");
     }
   };
 
