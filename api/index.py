@@ -166,6 +166,18 @@ def create_segment(segment: schemas.SegmentCreate, db: Session = Depends(get_db)
 def read_challenges(db: Session = Depends(get_db)):
     return db.query(models.Challenge).all()
 
+@router.get("/routes", response_model=List[schemas.Route])
+def read_routes(db: Session = Depends(get_db)):
+    return db.query(models.Route).all()
+
+@router.post("/routes", response_model=schemas.Route)
+def create_route(route: schemas.RouteCreate, db: Session = Depends(get_db)):
+    db_route = models.Route(**route.dict())
+    db.add(db_route)
+    db.commit()
+    db.refresh(db_route)
+    return db_route
+
 @router.get("/user", response_model=schemas.User)
 def get_user(db: Session = Depends(get_db)):
     user = db.query(models.User).first()

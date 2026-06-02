@@ -197,6 +197,12 @@ function App() {
     time: '',
     desc: ''
   });
+  const [newRoute, setNewRoute] = useState({
+    name: '',
+    distance: '',
+    location: '',
+    coordinates: { lat: 37.7749, lng: -122.4194, zoom: 13 }
+  });
 
   const [newClub, setNewClub] = useState({ name: '', type: 'Running', description: '' });
 
@@ -215,25 +221,50 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [actRes, clubRes, segRes, challengeRes, userRes] = await Promise.all([
+        const [actRes, clubRes, segRes, chalRes, routeRes, userRes] = await Promise.all([
           fetch(`${API_URL}/activities`),
           fetch(`${API_URL}/clubs`),
           fetch(`${API_URL}/segments`),
           fetch(`${API_URL}/challenges`),
+          fetch(`${API_URL}/routes`),
           fetch(`${API_URL}/user`)
         ]);
 
         if (actRes.ok) setActivities(await actRes.json());
         if (clubRes.ok) setClubs(await clubRes.json());
-        if (segRes.ok) setMySegments(await segRes.json());
-        if (challengeRes.ok) setChallenges(await challengeRes.json());
+        if (segRes.ok) setSegments(await segRes.json());
+        if (chalRes.ok) setChallenges(await chalRes.json());
+        if (routeRes.ok) setRoutes(await routeRes.json());
         if (userRes.ok) setUser(await userRes.json());
-      } catch (err) {
-        console.error("Failed to fetch data from backend", err);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
       }
     };
     fetchData();
   }, []);
+
+  const handleCreateRoute = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${API_URL}/routes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newRoute)
+      });
+
+      if (res.ok) {
+        const created = await res.json();
+        setRoutes(prev => [created, ...prev]);
+        setShowNewRouteForm(false);
+        setNewRoute({ name: '', distance: '', location: '', coordinates: { lat: 37.7749, lng: -122.4194, zoom: 13 } });
+        alert("Route created successfully! 🗺️");
+      } else {
+        alert("Failed to create route.");
+      }
+    } catch (err) {
+      alert("Network error: Could not connect to the server.");
+    }
+  };
 
   const toggleJoinClub = async (id) => {
     try {
@@ -431,7 +462,15 @@ function App() {
         )}
 
         {activeTab === 'Training Log' && <TrainingLog activities={activities} user={user} />}
-        {activeTab === 'My Routes' && <MyRoutes activities={activities} />}
+        {activeTab === 'My Routes' && <MyRoutes
+          activities={activities}
+          routes={routes}
+          showNewRouteForm={showNewRouteForm}
+          setShowNewRouteForm={setShowNewRouteForm}
+          newRoute={newRoute}
+          setNewRoute={setNewRoute}
+          handleCreateRoute={handleCreateRoute}
+        />}
 
         {activeTab === 'Clubs' && (
           <Clubs

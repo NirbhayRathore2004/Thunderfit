@@ -100,3 +100,18 @@ class Segment(SegmentBase):
 
     class Config:
         from_attributes = True
+
+class RouteBase(BaseModel):
+    name: str
+    distance: str
+    location: str
+    coordinates: Dict[str, Any]
+
+class RouteCreate(RouteBase):
+    pass
+
+class Route(RouteBase):
+    id: int
+
+    class Config:
+        from_attributes = True

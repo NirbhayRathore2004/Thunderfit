@@ -69,3 +69,12 @@ class Challenge(Base):
     days_left = Column(Integer)
     progress = Column(Integer) # Percentage
     joined = Column(Boolean, default=False)
+
+class Route(Base):
+    __tablename__ = "routes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    distance = Column(String)
+    location = Column(String)
+    coordinates = Column(JSON) # {lat, lng, zoom}
