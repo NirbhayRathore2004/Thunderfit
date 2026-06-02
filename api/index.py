@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
@@ -12,6 +12,7 @@ except Exception as e:
     print(f"Error creating tables: {e}")
 
 app = FastAPI(title="ThunderFit API")
+router = APIRouter(prefix="/api")
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,7 +29,6 @@ def seed_data():
             db.close()
             return
 
-        # Create User with stats
         user = models.User(
             name="John Doe", 
             email="john@example.com", 
@@ -43,7 +43,6 @@ def seed_data():
         db.commit()
         db.refresh(user)
 
-        # Initial Activities
         activities = [
             models.Activity(
                 user_id=user.id,
@@ -76,7 +75,6 @@ def seed_data():
         ]
         db.add_all(activities)
 
-        # Initial Clubs
         clubs = [
             models.Club(name="SF Runners", members=12400, type="Running", joined=False, description="The largest running community in San Francisco.", color="#333"),
             models.Club(name="ThunderFit Pro", members=5200, type="Multi-sport", joined=True, description="Elite performance and triathlon training group.", color="#00A4EF"),
@@ -84,13 +82,11 @@ def seed_data():
         ]
         db.add_all(clubs)
 
-        # Initial Segments
         segments = [
             models.Segment(name="Golden Gate Climb", type="Run", icon="🏃", distance="2.3 km", elevation="120 m", best_time="12:45", attempts=8),
         ]
         db.add_all(segments)
 
-        # Initial Challenges
         challenges = [
             models.Challenge(title="June 10k Challenge", days_left=8, progress=60, joined=True),
             models.Challenge(title="Morning Motivation", days_left=12, progress=30, joined=False),
@@ -103,27 +99,23 @@ def seed_data():
     finally:
         db.close()
 
-# Only seed locally or on the first startup
-# For Vercel, it's safer to avoid root-level long-running tasks
 @app.on_event("startup")
 def on_startup():
     seed_data()
 
-@app.get("/activities", response_model=List[schemas.Activity])
+@router.get("/activities", response_model=List[schemas.Activity])
 def read_activities(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return db.query(models.Activity).order_by(models.Activity.id.desc()).offset(skip).limit(limit).all()
 
-@app.post("/activities", response_model=schemas.Activity)
+@router.post("/activities", response_model=schemas.Activity)
 def create_activity(activity: schemas.ActivityCreate, db: Session = Depends(get_db)):
     user = db.query(models.User).first()
     if not user:
-        # Create a default user if none exists
         user = models.User(name="Default User", email="user@example.com", avatar="DU")
         db.add(user)
         db.commit()
         db.refresh(user)
     
-    # Support both Pydantic v1 and v2
     data = activity.model_dump() if hasattr(activity, "model_dump") else activity.dict()
     db_activity = models.Activity(**data, user_id=user.id)
     db.add(db_activity)
@@ -131,11 +123,11 @@ def create_activity(activity: schemas.ActivityCreate, db: Session = Depends(get_
     db.refresh(db_activity)
     return db_activity
 
-@app.get("/clubs", response_model=List[schemas.Club])
+@router.get("/clubs", response_model=List[schemas.Club])
 def read_clubs(db: Session = Depends(get_db)):
     return db.query(models.Club).all()
 
-@app.post("/clubs", response_model=schemas.Club)
+@router.post("/clubs", response_model=schemas.Club)
 def create_club(club: schemas.ClubCreate, db: Session = Depends(get_db)):
     db_club = models.Club(**club.dict())
     db.add(db_club)
@@ -143,7 +135,7 @@ def create_club(club: schemas.ClubCreate, db: Session = Depends(get_db)):
     db.refresh(db_club)
     return db_club
 
-@app.post("/clubs/{club_id}/toggle", response_model=schemas.Club)
+@router.post("/clubs/{club_id}/toggle", response_model=schemas.Club)
 def toggle_club(club_id: int, db: Session = Depends(get_db)):
     db_club = db.query(models.Club).filter(models.Club.id == club_id).first()
     if not db_club:
@@ -154,11 +146,11 @@ def toggle_club(club_id: int, db: Session = Depends(get_db)):
     db.refresh(db_club)
     return db_club
 
-@app.get("/segments", response_model=List[schemas.Segment])
+@router.get("/segments", response_model=List[schemas.Segment])
 def read_segments(db: Session = Depends(get_db)):
     return db.query(models.Segment).all()
 
-@app.post("/segments", response_model=schemas.Segment)
+@router.post("/segments", response_model=schemas.Segment)
 def create_segment(segment: schemas.SegmentCreate, db: Session = Depends(get_db)):
     db_segment = models.Segment(**segment.dict())
     db.add(db_segment)
@@ -166,13 +158,15 @@ def create_segment(segment: schemas.SegmentCreate, db: Session = Depends(get_db)
     db.refresh(db_segment)
     return db_segment
 
-@app.get("/challenges", response_model=List[schemas.Challenge])
+@router.get("/challenges", response_model=List[schemas.Challenge])
 def read_challenges(db: Session = Depends(get_db)):
     return db.query(models.Challenge).all()
 
-@app.get("/user", response_model=schemas.User)
+@router.get("/user", response_model=schemas.User)
 def get_user(db: Session = Depends(get_db)):
     user = db.query(models.User).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+app.include_router(router)
