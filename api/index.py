@@ -109,19 +109,23 @@ def read_activities(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
 
 @router.post("/activities", response_model=schemas.Activity)
 def create_activity(activity: schemas.ActivityCreate, db: Session = Depends(get_db)):
-    user = db.query(models.User).first()
-    if not user:
-        user = models.User(name="Default User", email="user@example.com", avatar="DU")
-        db.add(user)
+    try:
+        user = db.query(models.User).first()
+        if not user:
+            user = models.User(name="Default User", email="user@example.com", avatar="DU")
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        
+        data = activity.model_dump() if hasattr(activity, "model_dump") else activity.dict()
+        db_activity = models.Activity(**data, user_id=user.id)
+        db.add(db_activity)
         db.commit()
-        db.refresh(user)
-    
-    data = activity.model_dump() if hasattr(activity, "model_dump") else activity.dict()
-    db_activity = models.Activity(**data, user_id=user.id)
-    db.add(db_activity)
-    db.commit()
-    db.refresh(db_activity)
-    return db_activity
+        db.refresh(db_activity)
+        return db_activity
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Database Error: {str(e)}")
 
 @router.get("/clubs", response_model=List[schemas.Club])
 def read_clubs(db: Session = Depends(get_db)):
