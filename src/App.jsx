@@ -354,12 +354,13 @@ function App() {
         setNewActivity({ title: '', type: 'Run', distance: '', time: '', desc: '' });
         alert("Activity saved successfully! 🏃‍♂️");
       } else {
-        const errorData = await res.json().catch(() => ({ detail: "Unknown error" }));
-        alert(`Failed to save activity: ${errorData.detail || res.statusText}`);
+        const status = res.status;
+        const text = await res.text().catch(() => "No response body");
+        alert(`Server Error (${status}): ${text.substring(0, 100)}`);
       }
     } catch (err) {
       console.error("Failed to create activity", err);
-      alert("Network error: Could not connect to the server.");
+      alert(`Network Error: ${err.message}`);
     }
   };
 
