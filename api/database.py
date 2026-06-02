@@ -7,6 +7,10 @@ from sqlalchemy.orm import sessionmaker
 # Fallback to local SQLite for development
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./thunderfit.db")
 
+# Fix for Heroku/Supabase where the URL starts with 'postgres://' instead of 'postgresql://'
+if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
+    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 # SQLite needs 'check_same_thread': False, but PostgreSQL doesn't
 connect_args = {}
 if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):

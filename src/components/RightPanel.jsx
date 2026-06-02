@@ -1,6 +1,6 @@
 import React from 'react';
 
-const RightPanel = ({ clubs, user, challenges }) => {
+const RightPanel = ({ clubs, user, challenges, toggleJoinClub, setActiveTab }) => {
     return (
         <aside className="right-sidebar">
             {/* Profile Widget */}
@@ -39,15 +39,29 @@ const RightPanel = ({ clubs, user, challenges }) => {
             <div className="widget-card">
                 <div className="widget-title">
                     <span>Suggested Clubs</span>
-                    <span style={{ color: 'var(--primary)', cursor: 'pointer' }}>View All</span>
+                    <span
+                        style={{ color: 'var(--primary)', cursor: 'pointer' }}
+                        onClick={() => setActiveTab('Clubs')}
+                    >
+                        View All
+                    </span>
                 </div>
                 {clubs.filter(c => !c.joined).slice(0, 3).map(club => (
-                    <div key={club.id} className="club-item">
-                        <div className="club-img" style={{ backgroundColor: club.color, opacity: 0.8 }}></div>
-                        <div className="club-info">
-                            <div className="club-name">{club.name}</div>
-                            <div className="club-members">{club.members.toLocaleString()} members</div>
+                    <div key={club.id} className="club-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                            <div className="club-img" style={{ backgroundColor: club.color, opacity: 0.8, width: '32px', height: '32px' }}></div>
+                            <div className="club-info">
+                                <div className="club-name" style={{ fontSize: '0.85rem' }}>{club.name}</div>
+                                <div className="club-members" style={{ fontSize: '0.75rem' }}>{club.members.toLocaleString()}</div>
+                            </div>
                         </div>
+                        <button
+                            className="action-btn"
+                            style={{ padding: '2px 8px', fontSize: '0.7rem' }}
+                            onClick={() => toggleJoinClub(club.id)}
+                        >
+                            Join
+                        </button>
                     </div>
                 ))}
             </div>
