@@ -1,136 +1,111 @@
 # ThunderFit 🏃‍♂️⚡
 
-A premium fitness tracking application inspired by Strava, built with React and Vite.
+A premium full-stack fitness tracking application inspired by Strava, built with **React**, **FastAPI**, and **SQLite**.
 
 ## ✨ Features
 
 ### 🏠 Activity Feed
-- Real-time activity updates from friends and fellow athletes
-- Interactive activity cards with detailed stats
-- Like, comment, and share functionality
-- **Interactive maps** powered by OpenStreetMap
-- Multiple map view types (Map, Satellite, Terrain)
+- Real-time activity updates fetched from the **Python backend**.
+- Interactive activity cards with detailed stats.
+- Like, comment, and share functionality.
+- **Interactive maps** powered by OpenStreetMap.
+- Multiple map view types (Map, Satellite, Terrain).
 
-### ⭐ My Segments
-- Track your performance on favorite routes
-- View all your saved segments with key metrics
-- **Add activities to segments** with one click
-- See distance, elevation, and best times
-- Available activities section for easy segment creation
+### ⭐ My Segments & Routes
+- Track your performance on favorite routes and segments.
+- View all your saved segments with key metrics.
+- **Add activities to segments** with real-time database persistence.
+- **My Routes** view for exploring paths with interactive maps.
 
-### 📊 Activity Stats
-- Distance tracking
-- Pace/Speed monitoring
-- Time duration
-- Elevation gain
-- Calories burned
+### 📅 Training Log
+- Complete statistical dashboard showing performance trends.
+- Tracks **Weekly Distance**, **Active Time**, and **Total Volume**.
+- Visualized recent training history stored in SQL.
 
-### 🗺️ Interactive Maps
-- Embedded OpenStreetMap views for each activity
-- GPS coordinate display
-- Switch between Map, Satellite, and Terrain views
-- Direct link to open location in Google Maps
-- Responsive and interactive map controls
+### 👕 Clubs & Social
+- Browse and join performance-focused clubs.
+- Real-time member count updates and club creation.
+- Dynamic club suggestions based on your interests.
 
 ### 🎨 Premium Design
-- Clean, modern Strava-inspired UI
-- Smooth animations and transitions
-- Glassmorphism effects
-- Gradient buttons and premium styling
-- Fully responsive layout
+- Clean, modern Strava-inspired UI with **Glassmorphism** effects.
+- **Dark Mode** support with persistent user preferences.
+- Fully responsive layout for mobile and desktop.
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v14 or higher)
-- npm or yarn
+- **Node.js** (v14 or higher)
+- **Python** (3.9 or higher)
+- **pip** and a virtual environment tool
 
 ### Installation
 
+#### 1. Setup Backend
 ```bash
-# Install dependencies
+# Navigate to project root
+cd Thunderfit
+
+# Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install Python dependencies
+pip install -r backend/requirements.txt
+
+# Start FastAPI server
+python3 -m uvicorn backend.main:app --reload --port 8000
+```
+Backend will be available at `http://localhost:8000` with interactive docs at `/docs`.
+
+#### 2. Setup Frontend
+```bash
+# In a new terminal
+# Install Node dependencies
 npm install
 
-# Start development server
+# Start Vite development server
 npm run dev
-
-# Build for production
-npm run build
 ```
-
-The app will be available at `http://localhost:5173/`
+Frontend will be available at `http://localhost:5173/`.
 
 ## 📁 Project Structure
 
 ```
 Thunderfit/
-├── src/
-│   ├── App.jsx          # Main application component
-│   ├── MapView.jsx      # Interactive map component
-│   ├── index.css        # Global styles and design system
-│   ├── main.jsx         # Application entry point
-│   └── assets/          # Images and static assets
-├── public/              # Public assets
-└── index.html           # HTML template
+├── backend/            # Python FastAPI Backend
+│   ├── main.py         # API entry point & routes
+│   ├── models.py       # SQLAlchemy database models
+│   ├── schemas.py      # Pydantic data validation
+│   └── database.py     # Database connection setup
+├── src/                # React Frontend
+│   ├── components/     # Modular UI components
+│   ├── assets/         # Static assets & logo
+│   ├── App.jsx         # Main application logic
+│   ├── MapView.jsx     # Reusable Map component
+│   └── index.css       # Design system & global styles
+├── thunderfit.db       # SQLite Database (Auto-generated)
+└── package.json        # Node dependencies
 ```
-
-## 🎯 Key Components
-
-### MapView Component
-Displays interactive maps for activities with:
-- OpenStreetMap integration (no API key required)
-- Multiple view modes
-- GPS coordinates
-- Direct Google Maps integration
-
-### Activity Feed
-Shows real-time updates with:
-- User information
-- Activity details and descriptions
-- Performance statistics
-- Interactive maps for outdoor activities
-- Social features (likes, comments, shares)
-
-### My Segments
-Personal segment tracking with:
-- Saved segments list
-- Performance metrics
-- Available activities to add
-- One-click segment creation
 
 ## 🛠️ Technologies Used
 
-- **React** - UI library
-- **Vite** - Build tool and dev server
-- **OpenStreetMap** - Interactive maps
-- **CSS3** - Modern styling with custom properties
-- **ESLint** - Code quality
+- **Frontend**: [React](https://reactjs.org/), [Vite](https://vitejs.dev/), [OpenStreetMap](https://www.openstreetmap.org/)
+- **Backend**: [FastAPI](https://fastapi.tiangolo.com/), [SQLAlchemy](https://www.sqlalchemy.org/)
+- **Database**: [SQLite](https://www.sqlite.org/)
+- **Styling**: Modern CSS3 with Custom Properties (Vanilla)
 
 ## 🎨 Design System
 
-The app uses a carefully crafted design system with:
-- Custom color palette (Strava Orange, Thunderbolt Blue)
-- Consistent spacing and typography
-- Smooth animations and transitions
-- Responsive breakpoints
-
-## 📝 Future Enhancements
-
-- [ ] Google Maps API integration (requires API key)
-- [ ] Training Log functionality
-- [ ] My Routes feature
-- [ ] Clubs and social features
-- [ ] User authentication
-- [ ] Activity upload
-- [ ] Performance analytics
+The app utilizes a premium design system featuring:
+- **Primary Color**: Strava Orange (`#fc4c02`)
+- **Accent Color**: Thunderbolt Blue (`#00A4EF`)
+- **Typography**: Inter / System UI
+- **Components**: Rounded corners (`12px`), subtle box shadows, and glassmorphism.
 
 ## 📄 License
 
-This project is open source and available under the MIT License.
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
+This project is open-source and available under the MIT License.
 
 ---
 
