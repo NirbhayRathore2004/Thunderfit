@@ -10,6 +10,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     avatar = Column(String)
     avatar_color = Column(String)
+    hashed_password = Column(String)
 
     # Performance Stats
     weekly_distance = Column(Float, default=0.0)

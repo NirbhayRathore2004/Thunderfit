@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Settings = ({ darkMode, setDarkMode }) => {
+const Settings = ({ darkMode, setDarkMode, onLogout }) => {
     return (
         <div className="settings-container">
             <div style={{ marginBottom: '2rem' }}>
@@ -20,14 +20,7 @@ const Settings = ({ darkMode, setDarkMode }) => {
                             <label>Display Name</label>
                             <p>How you appear to other athletes.</p>
                         </div>
-                        <input type="text" className="settings-input" defaultValue="John Doe" />
-                    </div>
-                    <div className="settings-item">
-                        <div className="settings-item-info">
-                            <label>Email Address</label>
-                            <p>Your primary contact email.</p>
-                        </div>
-                        <input type="email" className="settings-input" defaultValue="john.doe@example.com" />
+                        <input type="text" className="settings-input" defaultValue="User" />
                     </div>
                 </div>
             </div>
@@ -50,16 +43,6 @@ const Settings = ({ darkMode, setDarkMode }) => {
                             <span className="toggle-slider"></span>
                         </div>
                     </label>
-                    <div className="settings-item">
-                        <div className="settings-item-info">
-                            <div style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Unit System</div>
-                            <p>Choose between metric and imperial units.</p>
-                        </div>
-                        <select className="settings-select">
-                            <option>Metric (km, kg, m)</option>
-                            <option>Imperial (mi, lb, ft)</option>
-                        </select>
-                    </div>
                 </div>
             </div>
 
@@ -71,15 +54,24 @@ const Settings = ({ darkMode, setDarkMode }) => {
                             <div style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Privacy Zones</div>
                             <p>Hide your home or office location on maps.</p>
                         </div>
-                        <button className="action-btn">Manage Zones</button>
+                        <button className="action-btn" onClick={() => alert("Privacy Zones manager opening... 🔒")}>Manage Zones</button>
                     </div>
-                    <div className="settings-item">
-                        <div className="settings-item-info">
-                            <div style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Data Export</div>
-                            <p>Download a copy of all your activity data.</p>
-                        </div>
-                        <button className="action-btn">Request Export</button>
-                    </div>
+                </div>
+            </div>
+
+            <div style={{ marginTop: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <button
+                    className="action-btn"
+                    style={{ background: 'rgba(255, 107, 107, 0.1)', color: '#ff6b6b', border: '1px solid rgba(255, 107, 107, 0.2)' }}
+                    onClick={onLogout}
+                >
+                    🚪 Logout
+                </button>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                    <button className="action-btn" style={{ padding: '0.8rem 2rem' }} onClick={() => window.location.reload()}>Discard</button>
+                    <button className="action-btn add-to-segment" style={{ padding: '0.8rem 2.5rem' }} onClick={() => alert("Settings saved successfully! ✅")}>
+                        Save Changes
+                    </button>
                 </div>
             </div>
         </div>

@@ -8,6 +8,7 @@ import Settings from './components/Settings'
 import TrainingLog from './components/TrainingLog'
 import MyRoutes from './components/MyRoutes'
 import RightPanel from './components/RightPanel'
+import Auth from './components/Auth'
 
 const INITIAL_ACTIVITIES = [
   {
@@ -181,14 +182,29 @@ function App() {
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
   const [likedActivities, setLikedActivities] = useState({});
   const [selectedSport, setSelectedSport] = useState('All');
-  const [showNewActivityForm, setShowNewActivityForm] = useState(false);
-  const [showNewClubForm, setShowNewClubForm] = useState(false);
-
   const [activities, setActivities] = useState([]);
   const [clubs, setClubs] = useState([]);
   const [mySegments, setMySegments] = useState([]);
   const [challenges, setChallenges] = useState([]);
-  const [user, setUser] = useState(null);
+  const [routes, setRoutes] = useState([]);
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('user');
+    try {
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+    setActiveTab('Activity Feed');
+  };
+
+  const [showNewActivityForm, setShowNewActivityForm] = useState(false);
+  const [showNewClubForm, setShowNewClubForm] = useState(false);
+  const [showNewRouteForm, setShowNewRouteForm] = useState(false);
 
   const [newActivity, setNewActivity] = useState({
     title: '',
@@ -232,7 +248,7 @@ function App() {
 
         if (actRes.ok) setActivities(await actRes.json());
         if (clubRes.ok) setClubs(await clubRes.json());
-        if (segRes.ok) setSegments(await segRes.json());
+        if (segRes.ok) setMySegments(await segRes.json());
         if (chalRes.ok) setChallenges(await chalRes.json());
         if (routeRes.ok) setRoutes(await routeRes.json());
         if (userRes.ok) setUser(await userRes.json());
@@ -427,73 +443,79 @@ function App() {
 
   return (
     <div className="app-container">
-      <Sidebar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        navItems={navItems}
-        logo={logo}
-      />
-
-      <main className="main-feed">
-        {activeTab === 'Activity Feed' && (
-          <ActivityFeed
-            getGreeting={getGreeting}
-            sportTypes={sportTypes}
-            selectedSport={selectedSport}
-            setSelectedSport={setSelectedSport}
-            filteredActivities={filteredActivities}
-            likedActivities={likedActivities}
-            toggleLike={toggleLike}
+      {!user ? (
+        <Auth onLogin={setUser} />
+      ) : (
+        <>
+          <Sidebar
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            navItems={navItems}
+            logo={logo}
           />
-        )}
 
-        {activeTab === 'My Segments' && (
-          <MySegments
-            mySegments={mySegments}
-            activities={activities}
-            showNewActivityForm={showNewActivityForm}
-            setShowNewActivityForm={setShowNewActivityForm}
-            newActivity={newActivity}
-            setNewActivity={setNewActivity}
-            handleCreateActivity={handleCreateActivity}
-            addActivityToSegments={addActivityToSegments}
-            sportTypes={sportTypes}
-          />
-        )}
+          <main className="main-feed">
+            {activeTab === 'Activity Feed' && (
+              <ActivityFeed
+                getGreeting={getGreeting}
+                sportTypes={sportTypes}
+                selectedSport={selectedSport}
+                setSelectedSport={setSelectedSport}
+                filteredActivities={filteredActivities}
+                likedActivities={likedActivities}
+                toggleLike={toggleLike}
+              />
+            )}
 
-        {activeTab === 'Training Log' && <TrainingLog activities={activities} user={user} />}
-        {activeTab === 'My Routes' && <MyRoutes
-          activities={activities}
-          routes={routes}
-          showNewRouteForm={showNewRouteForm}
-          setShowNewRouteForm={setShowNewRouteForm}
-          newRoute={newRoute}
-          setNewRoute={setNewRoute}
-          handleCreateRoute={handleCreateRoute}
-        />}
+            {activeTab === 'My Segments' && (
+              <MySegments
+                mySegments={mySegments}
+                activities={activities}
+                showNewActivityForm={showNewActivityForm}
+                setShowNewActivityForm={setShowNewActivityForm}
+                newActivity={newActivity}
+                setNewActivity={setNewActivity}
+                handleCreateActivity={handleCreateActivity}
+                addActivityToSegments={addActivityToSegments}
+                sportTypes={sportTypes}
+              />
+            )}
 
-        {activeTab === 'Clubs' && (
-          <Clubs
+            {activeTab === 'Training Log' && <TrainingLog activities={activities} user={user} />}
+            {activeTab === 'My Routes' && <MyRoutes
+              activities={activities}
+              routes={routes}
+              showNewRouteForm={showNewRouteForm}
+              setShowNewRouteForm={setShowNewRouteForm}
+              newRoute={newRoute}
+              setNewRoute={setNewRoute}
+              handleCreateRoute={handleCreateRoute}
+            />}
+
+            {activeTab === 'Clubs' && (
+              <Clubs
+                clubs={clubs}
+                showNewClubForm={showNewClubForm}
+                setShowNewClubForm={setShowNewClubForm}
+                newClub={newClub}
+                setNewClub={setNewClub}
+                handleCreateClub={handleCreateClub}
+                toggleJoinClub={toggleJoinClub}
+              />
+            )}
+
+            {activeTab === 'Settings' && <Settings darkMode={darkMode} setDarkMode={setDarkMode} onLogout={handleLogout} />}
+          </main>
+
+          <RightPanel
             clubs={clubs}
-            showNewClubForm={showNewClubForm}
-            setShowNewClubForm={setShowNewClubForm}
-            newClub={newClub}
-            setNewClub={setNewClub}
-            handleCreateClub={handleCreateClub}
+            user={user}
+            challenges={challenges}
             toggleJoinClub={toggleJoinClub}
+            setActiveTab={setActiveTab}
           />
-        )}
-
-        {activeTab === 'Settings' && <Settings darkMode={darkMode} setDarkMode={setDarkMode} />}
-      </main>
-
-      <RightPanel
-        clubs={clubs}
-        user={user}
-        challenges={challenges}
-        toggleJoinClub={toggleJoinClub}
-        setActiveTab={setActiveTab}
-      />
+        </>
+      )}
     </div>
   );
 }

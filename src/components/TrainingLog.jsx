@@ -53,7 +53,7 @@ const TrainingLog = ({ activities, user }) => {
             </div>
 
             <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-                <button className="action-btn" style={{ width: '100%' }}>View Full Training History</button>
+                <button className="action-btn" style={{ width: '100%' }} onClick={() => alert("Full training history coming soon! 📈")}>View Full Training History</button>
             </div>
         </div>
     );

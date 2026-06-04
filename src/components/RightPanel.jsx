@@ -81,7 +81,7 @@ const RightPanel = ({ clubs, user, challenges, toggleJoinClub, setActiveTab }) =
                         </div>
                     </div>
                 ))}
-                <button className="action-btn" style={{ width: '100%', background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white' }}>Join More</button>
+                <button className="action-btn" style={{ width: '100%', background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white' }} onClick={() => alert("Explore more challenges coming soon! 🏆")}>Join More</button>
             </div>
         </aside>
     );

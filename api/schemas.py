@@ -11,8 +11,14 @@ class UserBase(BaseModel):
     total_distance: float = 0.0
     total_time: str = "0h 0m"
 
-class UserCreate(UserBase):
-    pass
+class UserCreate(BaseModel):
+    name: str
+    email: str
+    password: str
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
 
 class ChallengeBase(BaseModel):
     title: str
@@ -56,6 +62,7 @@ class Activity(ActivityBase):
 class User(UserBase):
     id: int
     activities: List[Activity] = []
+    hashed_password: Optional[str] = None
 
     class Config:
         from_attributes = True

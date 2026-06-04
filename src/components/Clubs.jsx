@@ -97,7 +97,7 @@ const Clubs = ({
                                     </div>
                                 </div>
                                 <div className="feed-actions" style={{ padding: '1rem' }}>
-                                    <button className="action-btn" style={{ flex: 1 }}>View Club</button>
+                                    <button className="action-btn" style={{ flex: 1 }} onClick={() => alert(`Opening ${club.name} details... 👕`)}>View Club</button>
                                     <button className="action-btn" onClick={() => toggleJoinClub(club.id)}>Leave</button>
                                 </div>
                             </div>
@@ -128,7 +128,7 @@ const Clubs = ({
                             </div>
                             <div className="feed-actions" style={{ padding: '1rem' }}>
                                 <button className="action-btn add-to-segment" style={{ flex: 1 }} onClick={() => toggleJoinClub(club.id)}>Join Club</button>
-                                <button className="action-btn">Info</button>
+                                <button className="action-btn" onClick={() => alert(`${club.name}: ${club.description}`)}>Info</button>
                             </div>
                         </div>
                     ))}

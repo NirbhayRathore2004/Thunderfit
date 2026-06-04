@@ -128,9 +128,9 @@ const MyRoutes = ({
                                 />
                             </div>
                             <div className="feed-actions">
-                                <button className="action-btn" style={{ flex: 1 }}>Use Route</button>
-                                <button className="action-btn">Edit</button>
-                                <button className="action-btn">Share</button>
+                                <button className="action-btn" style={{ flex: 1 }} onClick={() => alert(`Starting ${route.name}... 👟`)}>Use Route</button>
+                                <button className="action-btn" onClick={() => alert("Edit functionality coming soon! ✏️")}>Edit</button>
+                                <button className="action-btn" onClick={() => alert("Share functionality coming soon! 🔗")}>Share</button>
                             </div>
                         </div>
                     ))

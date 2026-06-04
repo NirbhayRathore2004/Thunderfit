@@ -5,6 +5,15 @@ from typing import List
 
 from api import models, schemas
 from api.database import SessionLocal, engine, get_db
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
 
 try:
     models.Base.metadata.create_all(bind=engine)
@@ -184,5 +193,37 @@ def get_user(db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+@router.post("/signup", response_model=schemas.User)
+def signup(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.email == user.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    hashed_pwd = get_password_hash(user.password)
+    avatar_color = '#' + ''.join([hex(ord(c)*50)[2:4] for c in user.name[:3]]).ljust(6, '0')[:6]
+    
+    new_user = models.User(
+        name=user.name,
+        email=user.email,
+        hashed_password=hashed_pwd,
+        avatar=user.name[:2].upper(),
+        avatar_color=avatar_color,
+        weekly_distance=0.0,
+        weekly_goal=50.0,
+        total_distance=0.0,
+        total_time="0h 0m"
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+
+@router.post("/login", response_model=schemas.User)
+def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.email == user.email).first()
+    if not db_user or not verify_password(user.password, db_user.hashed_password):
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
+    return db_user
 
 app.include_router(router)

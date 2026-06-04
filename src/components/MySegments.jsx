@@ -133,8 +133,8 @@ const MySegments = ({
                             </div>
                         </div>
                         <div className="feed-actions">
-                            <button className="action-btn">📊 View Details</button>
-                            <button className="action-btn">🏆 Leaderboard</button>
+                            <button className="action-btn" onClick={() => alert(`Analyzing details for ${segment.name}... 📊`)}>📊 View Details</button>
+                            <button className="action-btn" onClick={() => alert(`Opening leaderboard for ${segment.name}... 🏆`)}>🏆 Leaderboard</button>
                         </div>
                     </div>
                 ))}
@@ -177,7 +177,7 @@ const MySegments = ({
                             >
                                 ➕ Add to Segments
                             </button>
-                            <button className="action-btn">👁️ View Details</button>
+                            <button className="action-btn" onClick={() => alert(`Viewing details for ${activity.title}... 👁️`)}>👁️ View Details</button>
                         </div>
                     </div>
                 ))}
