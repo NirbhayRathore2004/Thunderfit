@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Settings = ({ darkMode, setDarkMode, onLogout }) => {
+const Settings = ({ darkMode, setDarkMode, onLogout, user }) => {
     return (
         <div className="settings-container">
             <div style={{ marginBottom: '2rem' }}>
@@ -20,7 +20,7 @@ const Settings = ({ darkMode, setDarkMode, onLogout }) => {
                             <label>Display Name</label>
                             <p>How you appear to other athletes.</p>
                         </div>
-                        <input type="text" className="settings-input" defaultValue="User" />
+                        <input type="text" className="settings-input" defaultValue={user?.name || "User"} />
                     </div>
                 </div>
             </div>

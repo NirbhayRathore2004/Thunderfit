@@ -452,6 +452,7 @@ function App() {
             setActiveTab={setActiveTab}
             navItems={navItems}
             logo={logo}
+            user={user}
           />
 
           <main className="main-feed">
@@ -464,6 +465,7 @@ function App() {
                 filteredActivities={filteredActivities}
                 likedActivities={likedActivities}
                 toggleLike={toggleLike}
+                user={user}
               />
             )}
 
@@ -504,7 +506,7 @@ function App() {
               />
             )}
 
-            {activeTab === 'Settings' && <Settings darkMode={darkMode} setDarkMode={setDarkMode} onLogout={handleLogout} />}
+            {activeTab === 'Settings' && <Settings darkMode={darkMode} setDarkMode={setDarkMode} onLogout={handleLogout} user={user} />}
           </main>
 
           <RightPanel

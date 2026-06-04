@@ -8,14 +8,15 @@ const ActivityFeed = ({
     setSelectedSport,
     filteredActivities,
     likedActivities,
-    toggleLike
+    toggleLike,
+    user
 }) => {
     return (
         <>
             {/* Greeting Header */}
             <div style={{ marginBottom: '1.5rem' }}>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-primary)' }}>
-                    {getGreeting()}, Athlete! 👋
+                    {getGreeting()}, {user?.name || 'Athlete'}! 👋
                 </h2>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
                     Here's what your friends have been up to.
