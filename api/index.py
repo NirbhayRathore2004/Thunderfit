@@ -119,12 +119,6 @@ def create_route(route: schemas.RouteCreate, db: Session = Depends(get_db)):
     db.refresh(db_route)
     return db_route
 
-@router.get("/user", response_model=schemas.User)
-def get_user(db: Session = Depends(get_db)):
-    user = db.query(models.User).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
 
 @router.post("/signup", response_model=schemas.User)
 def signup(user: schemas.UserCreate, db: Session = Depends(get_db)):

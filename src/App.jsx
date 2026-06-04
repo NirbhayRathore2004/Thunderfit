@@ -76,13 +76,12 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [actRes, clubRes, segRes, chalRes, routeRes, userRes] = await Promise.all([
+        const [actRes, clubRes, segRes, chalRes, routeRes] = await Promise.all([
           fetch(`${API_URL}/activities`),
           fetch(`${API_URL}/clubs`),
           fetch(`${API_URL}/segments`),
           fetch(`${API_URL}/challenges`),
-          fetch(`${API_URL}/routes`),
-          fetch(`${API_URL}/user`)
+          fetch(`${API_URL}/routes`)
         ]);
 
         if (actRes.ok) setActivities(await actRes.json());
@@ -90,7 +89,6 @@ function App() {
         if (segRes.ok) setMySegments(await segRes.json());
         if (chalRes.ok) setChallenges(await chalRes.json());
         if (routeRes.ok) setRoutes(await routeRes.json());
-        if (userRes.ok) setUser(await userRes.json());
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
