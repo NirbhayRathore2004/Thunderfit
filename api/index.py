@@ -5,15 +5,20 @@ from typing import List
 
 from api import models, schemas
 from api.database import SessionLocal, engine, get_db
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+import hashlib
+import secrets
 
 def get_password_hash(password):
-    return pwd_context.hash(password)
+    salt = secrets.token_hex(8)
+    h = hashlib.sha256((password + salt).encode()).hexdigest()
+    return f"{salt}${h}"
 
 def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        salt, h = hashed_password.split("$")
+        return hashlib.sha256((plain_password + salt).encode()).hexdigest() == h
+    except:
+        return False
 
 try:
     models.Base.metadata.create_all(bind=engine)
