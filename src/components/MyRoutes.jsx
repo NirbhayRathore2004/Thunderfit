@@ -80,12 +80,40 @@ const MyRoutes = ({
                                 />
                             </div>
                             <div className="form-group">
-                                <label>Location</label>
+                                <label>Location Name</label>
                                 <input
                                     type="text"
                                     placeholder="e.g. San Francisco, CA"
                                     value={newRoute.location}
                                     onChange={e => setNewRoute({ ...newRoute, location: e.target.value })}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Latitude</label>
+                                <input
+                                    type="number"
+                                    step="0.0001"
+                                    placeholder="37.7749"
+                                    value={newRoute.coordinates.lat}
+                                    onChange={e => setNewRoute({
+                                        ...newRoute,
+                                        coordinates: { ...newRoute.coordinates, lat: parseFloat(e.target.value) }
+                                    })}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Longitude</label>
+                                <input
+                                    type="number"
+                                    step="0.0001"
+                                    placeholder="-122.4194"
+                                    value={newRoute.coordinates.lng}
+                                    onChange={e => setNewRoute({
+                                        ...newRoute,
+                                        coordinates: { ...newRoute.coordinates, lng: parseFloat(e.target.value) }
+                                    })}
                                     required
                                 />
                             </div>

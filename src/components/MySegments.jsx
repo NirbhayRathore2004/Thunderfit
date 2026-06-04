@@ -93,6 +93,58 @@ const MySegments = ({
                                     onChange={e => setNewActivity({ ...newActivity, desc: e.target.value })}
                                 />
                             </div>
+
+                            <div className="form-group full-width" style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '8px' }}>
+                                <label style={{ margin: 0, fontWeight: 700 }}>Include Map?</label>
+                                <input
+                                    type="checkbox"
+                                    checked={newActivity.map}
+                                    onChange={e => setNewActivity({ ...newActivity, map: e.target.checked })}
+                                    style={{ width: '20px', height: '20px' }}
+                                />
+                            </div>
+
+                            {newActivity.map && (
+                                <>
+                                    <div className="form-group">
+                                        <label>Latitude</label>
+                                        <input
+                                            type="number"
+                                            step="0.0001"
+                                            value={newActivity.mapCoordinates.lat}
+                                            onChange={e => setNewActivity({
+                                                ...newActivity,
+                                                mapCoordinates: { ...newActivity.mapCoordinates, lat: parseFloat(e.target.value) }
+                                            })}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Longitude</label>
+                                        <input
+                                            type="number"
+                                            step="0.0001"
+                                            value={newActivity.mapCoordinates.lng}
+                                            onChange={e => setNewActivity({
+                                                ...newActivity,
+                                                mapCoordinates: { ...newActivity.mapCoordinates, lng: parseFloat(e.target.value) }
+                                            })}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Zoom Level</label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max="20"
+                                            value={newActivity.mapCoordinates.zoom}
+                                            onChange={e => setNewActivity({
+                                                ...newActivity,
+                                                mapCoordinates: { ...newActivity.mapCoordinates, zoom: parseInt(e.target.value) }
+                                            })}
+                                        />
+                                    </div>
+                                </>
+                            )}
                         </div>
                         <div className="form-actions">
                             <button type="button" className="action-btn" onClick={() => setShowNewActivityForm(false)}>Cancel</button>

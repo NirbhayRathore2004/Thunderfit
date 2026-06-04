@@ -50,7 +50,9 @@ function App() {
     type: 'Run',
     distance: '',
     time: '',
-    desc: ''
+    desc: '',
+    map: false,
+    mapCoordinates: { lat: 37.7749, lng: -122.4194, zoom: 13 }
   });
   const [newRoute, setNewRoute] = useState({
     name: '',
@@ -219,7 +221,8 @@ function App() {
         ] : []),
         { label: 'Time', value: newActivity.time },
       ],
-      map: false,
+      map: newActivity.map,
+      map_coordinates: newActivity.mapCoordinates,
       kudos: 0,
       comments: 0
     };
