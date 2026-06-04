@@ -37,81 +37,8 @@ app.add_middleware(
 )
 
 def seed_data():
-    try:
-        db = SessionLocal()
-        if db.query(models.User).first():
-            db.close()
-            return
-
-        user = models.User(
-            name="John Doe", 
-            email="john@example.com", 
-            avatar="JD", 
-            avatar_color="#e34402",
-            weekly_distance=42.5,
-            weekly_goal=50.0,
-            total_distance=1240.2,
-            total_time="145h 20m"
-        )
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-
-        activities = [
-            models.Activity(
-                user_id=user.id,
-                time="Yesterday at 6:30 PM",
-                location="San Francisco",
-                type="Run",
-                icon="🏃",
-                title="Evening Run - Golden Gate Park",
-                desc="Felt great today! Pushed the pace on the last mile.",
-                stats=[{"label": "Distance", "value": "8.52 km"}, {"label": "Pace", "value": "5:12 /km"}, {"label": "Time", "value": "45m 10s"}],
-                map=True,
-                map_coordinates={"lat": 37.7694, "lng": -122.4862, "zoom": 14},
-                kudos=24,
-                comments=3
-            ),
-            models.Activity(
-                user_id=user.id,
-                time="Today at 7:00 AM",
-                location="Bay Area",
-                type="Ride",
-                icon="🚴‍♀️",
-                title="Morning Commute ☕",
-                desc="Beautiful sunrise ride along the bay!",
-                stats=[{"label": "Distance", "value": "12.4 km"}, {"label": "Speed", "value": "22.5 km/h"}, {"label": "Time", "value": "33m 5s"}],
-                map=True,
-                map_coordinates={"lat": 37.8199, "lng": -122.4783, "zoom": 13},
-                kudos=12,
-                comments=0
-            )
-        ]
-        db.add_all(activities)
-
-        clubs = [
-            models.Club(name="SF Runners", members=12400, type="Running", joined=False, description="The largest running community in San Francisco.", color="#333"),
-            models.Club(name="ThunderFit Pro", members=5200, type="Multi-sport", joined=True, description="Elite performance and triathlon training group.", color="#00A4EF"),
-            models.Club(name="Bay Area Cyclists", members=8500, type="Cycling", joined=False, description="Weekend rides and social events for all levels.", color="#fc4c02"),
-        ]
-        db.add_all(clubs)
-
-        segments = [
-            models.Segment(name="Golden Gate Climb", type="Run", icon="🏃", distance="2.3 km", elevation="120 m", best_time="12:45", attempts=8),
-        ]
-        db.add_all(segments)
-
-        challenges = [
-            models.Challenge(title="June 10k Challenge", days_left=8, progress=60, joined=True),
-            models.Challenge(title="Morning Motivation", days_left=12, progress=30, joined=False),
-        ]
-        db.add_all(challenges)
-
-        db.commit()
-    except Exception as e:
-        print(f"Seeding error: {e}")
-    finally:
-        db.close()
+    # Seeding disabled for production/user-ready state
+    pass
 
 @app.on_event("startup")
 def on_startup():
