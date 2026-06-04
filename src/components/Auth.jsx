@@ -46,16 +46,16 @@ const Auth = ({ onLogin }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)',
-            padding: '2rem'
+            background: 'var(--bg-body)',
+            padding: '1rem'
         }}>
             <div className="auth-card animate-slide-up" style={{
                 width: '100%',
                 maxWidth: '450px',
                 background: 'var(--bg-card)',
                 borderRadius: '24px',
-                padding: '3rem',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                padding: 'var(--card-padding, 2rem)',
+                boxShadow: 'var(--shadow-md)',
                 border: '1px solid var(--border-color)',
                 backdropFilter: 'blur(10px)'
             }}>
@@ -104,9 +104,9 @@ const Auth = ({ onLogin }) => {
                                     width: '100%',
                                     padding: '1rem',
                                     borderRadius: '12px',
-                                    background: 'rgba(255,255,255,0.05)',
+                                    background: 'var(--bg-secondary)',
                                     border: '1px solid var(--border-color)',
-                                    color: 'white',
+                                    color: 'var(--text-primary)',
                                     fontSize: '1rem'
                                 }}
                             />
@@ -124,9 +124,9 @@ const Auth = ({ onLogin }) => {
                                 width: '100%',
                                 padding: '1rem',
                                 borderRadius: '12px',
-                                background: 'rgba(255,255,255,0.05)',
+                                background: 'var(--bg-secondary)',
                                 border: '1px solid var(--border-color)',
-                                color: 'white',
+                                color: 'var(--text-primary)',
                                 fontSize: '1rem'
                             }}
                         />
@@ -143,9 +143,9 @@ const Auth = ({ onLogin }) => {
                                 width: '100%',
                                 padding: '1rem',
                                 borderRadius: '12px',
-                                background: 'rgba(255,255,255,0.05)',
+                                background: 'var(--bg-secondary)',
                                 border: '1px solid var(--border-color)',
-                                color: 'white',
+                                color: 'var(--text-primary)',
                                 fontSize: '1rem'
                             }}
                         />
